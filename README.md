@@ -32,3 +32,10 @@ Kör projektet:
 ```
 npm run serve
 ```
+
+### Basrelationer
+users (id (PK), username, password, account_created, is_admin)
+categories (id (PK), name, created_at)
+menu_items (id(PK), name, price, description, created_at, is_available, is_offer, category_id(FK))
+messages (id (PK), name, email, message, is_handled, created_at)
+
