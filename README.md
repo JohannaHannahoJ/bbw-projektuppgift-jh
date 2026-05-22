@@ -32,6 +32,16 @@ Kör projektet:
 ```
 npm run serve
 ```
+## Databas
+Databasen är skapad via Neons PostgreSQL-tjänst. 
+
+Projektet har en `.env`-fil för känsliga uppgifter. Se `.env.sample` för aktuella variabler.
+
+För att skapa databasen körs:
+```
+node install.js
+```
+Install.js kopplar då upp sig mot Neons PostgreSQL och skapar tabellerna.
 
 ### Basrelationer
 users (id (PK), username, password, account_created, is_admin)
