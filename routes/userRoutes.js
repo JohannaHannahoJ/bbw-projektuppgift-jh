@@ -3,17 +3,19 @@ const router = express.Router();
 
 const client = require("../db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const authenticateToken = require("../middleware/authenticateToken");
 
 // Registrera användare -- ska skyddas med admin auth 
 router.post("/register", async (req, res) => {
     try {
-        const { username, password, is_admin=false } = req.body;
+        const { username, password, is_admin = false } = req.body;
 
         if (!username || !password) {
             return res.status(400).json({ message: "Fyll i användarnamn och lösenord" });
         }
 
-         // Kontrollera att användarnamnet är minst 4 tecken
+        // Kontrollera att användarnamnet är minst 4 tecken
         if (username.length < 4) {
             return res.status(400).json({
                 message: "Användarnamnet måste vara minst 4 tecken."
@@ -84,13 +86,31 @@ router.post("/login", async (req, res) => {
             return res.status(401).json({ message: "Fel användarnamn eller lösenord" });
         }
 
+        // skapa payload
+        const payload = {
+            id: user.id,
+            username: user.username,
+            is_admin: user.is_admin
+        };
+
+        // skapa en JWT token
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+
         // korrekt login
-        res.status(200).json({ message: "Lyckad inloggning!" });
+        res.status(200).json({ message: "Lyckad inloggning!", token });
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Serverfel" });
     }
+});
+
+// test
+router.get("/protected", authenticateToken, (req, res) => {
+    res.json({
+        message: "Du är inloggad!",
+        user: req.user
+    });
 });
 
 module.exports = router;
