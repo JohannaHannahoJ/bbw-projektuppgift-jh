@@ -52,4 +52,45 @@ router.post("/register", async (req, res) => {
     }
 });
 
+
+// Logga in användare
+router.post("/login", async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // validera input
+        if (!username || !password) {
+            return res.status(400).json({ message: "Fyll i användarnamn och lösenord" });
+        }
+
+        // hämta user
+        const result = await client.query(
+            "SELECT * FROM users WHERE username = $1", [username]
+        );
+
+        // om användare inte finns
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: "Fel användarnamn eller lösenord" });
+        }
+
+        // spara matchande användaren från db
+        const user = result.rows[0];
+
+        // jämför inmatat lösenord med hashat lösenord från db
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        // om password inte stämmer, felmeddelande och hoppa ur funktionen
+        if (!passwordMatch) {
+            return res.status(401).json({ message: "Fel användarnamn eller lösenord" });
+        }
+
+        // korrekt login
+        res.status(200).json({ message: "Lyckad inloggning!" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Serverfel" });
+    }
+});
+
 module.exports = router;
