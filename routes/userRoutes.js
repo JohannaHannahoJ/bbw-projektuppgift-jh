@@ -1,0 +1,55 @@
+const express = require("express");
+const router = express.Router();
+
+const client = require("../db");
+const bcrypt = require("bcrypt");
+
+// Registrera användare -- ska skyddas med admin auth 
+router.post("/register", async (req, res) => {
+    try {
+        const { username, password, is_admin=false } = req.body;
+
+        if (!username || !password) {
+            return res.status(400).json({ message: "Fyll i användarnamn och lösenord" });
+        }
+
+         // Kontrollera att användarnamnet är minst 4 tecken
+        if (username.length < 4) {
+            return res.status(400).json({
+                message: "Användarnamnet måste vara minst 4 tecken."
+            });
+        }
+
+        // Kontrollera att lösenordet är minst 8 tecken
+        if (password.length < 8) {
+            return res.status(400).json({ message: "Lösenordet måste vara minst 8 tecken." })
+        }
+
+
+        // kolla om användare finns
+        const result = await client.query(
+            "SELECT * FROM users WHERE username = $1", [username]
+        );
+
+        // om användare med samma namn finns, kryptiskt felmeddelande
+        if (result.rows.length > 0) {
+            return res.status(409).json({ message: "Registreringen misslyckades" });
+        }
+
+        // hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // skapa användare
+        await client.query(
+            "INSERT INTO users (username, password, is_admin) VALUES ($1, $2, $3)", [username, hashedPassword, is_admin]
+        );
+
+        res.status(201).json({ message: "Användare skapad" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Serverfel" });
+    }
+});
+
+module.exports = router;
