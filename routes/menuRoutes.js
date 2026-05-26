@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
             FROM menu_items
             JOIN categories ON menu_items.category_id = categories.id
             ORDER BY 
-                categories.name ASC,
+                categories.name DESC,
                 menu_items.is_available DESC,
                 menu_items.name ASC
         `);
