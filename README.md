@@ -11,7 +11,15 @@ Detta projekt är del 1 av Projektuppgiften i kursen *Backend-baserad webbutveck
 Syftet är att skapa en webbtjänst som hanterar 
 
 Del 2 av uppgiften är en frontend-applikation som finns här:  
-**länk kommer**
+https://github.com/JohannaHannahoJ/bbw-projektuppgift-frontend-jh
+
+## Tekniker
+- Node.js
+- Express
+- PostgreSQL (Neon)
+- pg Pool
+- JWT Authentication
+- bcrypt
 
 ## Installation
 
