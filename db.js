@@ -1,22 +1,21 @@
 // Inställningar för att ansluta till databasen
 
-const { Client } = require("pg");
+const { Client, Pool } = require("pg");
 require("dotenv").config();
 
 // Inställningar för att ansluta till databasen
-const client = new Client({
+const client = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false
     }
 });
 
-client.connect((err) => {
-    if (err) {
-        console.log("Connection error: " + err);
-    } else {
-        console.log("Connected to database.")
-    }
+client.on("error", (err) => {
+    console.log("Connection error: " + err);
 });
+
+console.log("Connected to database.");
+
 
 module.exports = client;
