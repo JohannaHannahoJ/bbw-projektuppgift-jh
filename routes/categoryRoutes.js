@@ -8,7 +8,7 @@ const authenticateToken = require("../middleware/authenticateToken");
 router.get("/", async (req, res) => {
     try {
         const result = await client.query(
-            "SELECT * FROM categories ORDER BY name ASC"
+            "SELECT * FROM categories ORDER BY name DESC"
         );
 
         res.json(result.rows);
