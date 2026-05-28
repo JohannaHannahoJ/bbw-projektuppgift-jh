@@ -8,7 +8,7 @@ Länk till API:t:
 
 Detta projekt är del 1 av Projektuppgiften i kursen *Backend-baserad webbutveckling*.
 
-Syftet är att skapa en webbtjänst som hanterar 
+Syftet är att skapa en webbtjänst (REST API) som hanterar användare och meny med koppling till en PostgreSQL-databas. Jag har även lagt till kategorier och meddelanden.
 
 Del 2 av uppgiften är en frontend-applikation som finns här:  
 https://github.com/JohannaHannahoJ/bbw-projektuppgift-frontend-jh
@@ -20,6 +20,7 @@ https://github.com/JohannaHannahoJ/bbw-projektuppgift-frontend-jh
 - pg Pool
 - JWT Authentication
 - bcrypt
+- dotenv
 
 ## Installation
 
@@ -57,3 +58,8 @@ categories (id (PK), name, created_at)
 menu_items (id(PK), name, price, description, created_at, is_available, is_offer, category_id(FK))
 messages (id (PK), name, email, message, is_handled, created_at)
 
+## Testdata
+För att fylla databasen med testdata kan följande script köras:
+
+```bash
+node inserts.js
