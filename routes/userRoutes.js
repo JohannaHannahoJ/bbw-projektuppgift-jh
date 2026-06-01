@@ -5,9 +5,24 @@ const client = require("../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authenticateToken = require("../middleware/authenticateToken");
+const requireAdmin = require("../middleware/requireAdmin");
 
-// Registrera användare -- ska skyddas med admin auth 
-router.post("/register", async (req, res) => {
+// hämta användare - skyddas med admin auth
+router.get("/", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const result = await client.query(
+            `SELECT * FROM users ORDER BY account_created DESC`
+        );
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Serverfel" });
+    }
+});
+
+// Registrera användare - skyddas med admin auth 
+router.post("/register", authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { username, password, is_admin = false } = req.body;
 
@@ -27,13 +42,12 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ message: "Lösenordet måste vara minst 8 tecken." })
         }
 
-
         // kolla om användare finns
         const result = await client.query(
             "SELECT * FROM users WHERE username = $1", [username]
         );
 
-        // om användare med samma namn finns, kryptiskt felmeddelande
+        // om användare med samma namn finns, felmeddelande
         if (result.rows.length > 0) {
             return res.status(409).json({ message: "Registreringen misslyckades" });
         }
@@ -54,6 +68,36 @@ router.post("/register", async (req, res) => {
     }
 });
 
+// ta bort användare, skyddad route, endast admin kommer åt
+router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
+    
+    try {
+        const { id } = req.params;
+        // kolla om användare finns
+        const result = await client.query(
+            "SELECT * FROM users WHERE id = $1", [id]
+        );
+
+        // om admin försöker ta bort sig själv
+        if (Number(id) === req.user.id) {
+            return res.status(400).json({ message: "Det går inte att ta bort sitt eget konto" });
+        }
+
+        // om användare inte finns, felmeddelande
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Användaren finns inte" });
+        }
+
+        await client.query(
+            "DELETE FROM users WHERE id = $1", [id]
+        );
+
+        res.status(200).json({ message: "Användare raderad" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Serverfel" });
+    }
+});
 
 // Logga in användare
 router.post("/login", async (req, res) => {
@@ -103,14 +147,6 @@ router.post("/login", async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Serverfel" });
     }
-});
-
-// test
-router.get("/protected", authenticateToken, (req, res) => {
-    res.json({
-        message: "Du är inloggad!",
-        user: req.user
-    });
 });
 
 module.exports = router;

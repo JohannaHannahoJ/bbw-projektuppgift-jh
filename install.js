@@ -13,7 +13,7 @@ const client = new Client({
 async function install() {
     try {
         await client.connect();
-        console.log("Ansluten till Render Postgres");
+        console.log("Ansluten till Neon Postgres");
 
         const sql = `
             CREATE TABLE IF NOT EXISTS users (
