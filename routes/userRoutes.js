@@ -141,7 +141,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
         // korrekt login
-        res.status(200).json({ message: "Lyckad inloggning!", token });
+        res.status(200).json({ message: "Lyckad inloggning!", token, is_admin: user.is_admin });
 
     } catch (error) {
         console.error(error);
