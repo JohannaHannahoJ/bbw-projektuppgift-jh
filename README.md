@@ -2,8 +2,9 @@
 
 **Genomförd av: joha2102**
 
-Länk till API:t: 
-Webbapplikationen finns här: 
+Länk till API:t: https://bbw-projektuppgift-jh.onrender.com/api/menu
+Länk till applikationens publika sida: https://bbw-projektuppgift-lazycat.netlify.app/home 
+Länk till inloggningssidan: https://bbw-projektuppgift-lazycat.netlify.app/login
 
 Detta projekt är del 1 av Projektuppgiften i kursen *Backend-baserad webbutveckling*.
 
@@ -70,7 +71,7 @@ node inserts.js
 ```
 
 ## API Endpoints
-Så här når du API:ets olika tabeller
+Så här når du API:ets endpoints:
 
 ### Users
 | Metod | Ändpunkt            | Beskrivning                                        |
